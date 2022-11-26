@@ -1,5 +1,3 @@
-from asyncio.windows_events import NULL
-from tkinter.tix import INTEGER
 import pandas as pd
 import numpy as np
 import scipy.io as sio
@@ -10,7 +8,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import math
 from scipy.spatial import distance
-from sklearn.preprocessing import StandardScaler
 import json
 version = 3.42
 #recOred determines whether it's calculating for the reduced datasets with the Euclidean distance dimension (True), or just the reduced datasets (False)
