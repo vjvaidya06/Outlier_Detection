@@ -9,11 +9,29 @@ import streamlit as st
 import math
 from scipy.spatial import distance
 import json
-version = 3.42
+from pyod.models.abod import ABOD
+from sklearn.ensemble import IsolationForest
+version = 4.0
 #recOred determines whether it's calculating for the reduced datasets with the Euclidean distance dimension (True), or just the reduced datasets (False)
-def calcOutliers(data_input, maxoutliers, columns, recOred):
+def getTopOutliers(numOutliers, scores):
+    scores1 = scores.tolist()
+    arr = []
+    for i in range(numOutliers):
+        arr.append([scores1.index(max(scores1)), max(scores1)])
+        scores1[scores1.index(max(scores1))] = 0
+    return arr
+
+def calcOutliers(data_input, maxoutliers, columns, recOred, method):
     #Calculating Each Outlier Preemptively
-    outliersP = lof.LOF_algorithm(data_input, p=int(maxoutliers), distance_metric='euclidean')
+    if (method == "Isolation Forest (IF)" or method == "Angle Based Outlier Detection (ABOD)"):
+        if (method == "Isolation Forest (IF)"):
+            model = IsolationForest(n_estimators=100, max_samples= 'auto', contamination= 'auto', random_state=3)
+        elif (method == "Angle Based Outlier Detection (ABOD)"):
+            model = ABOD(contamination=0.1, n_neighbors=10, method='fast')
+        model.fit(data_input.astype(float))
+        outliersP = getTopOutliers(int(maxoutliers), np.abs(model.decision_function(data_input)))
+    else:
+        outliersP = lof.LOF_algorithm(data_input, p=int(maxoutliers), distance_metric='euclidean')
     for j in range(1, (columns + 1)):
         loading.progress(int(((j - 1) * (100/columns))) + int((100/columns)))
         pca = PCA(n_components=j)
@@ -31,23 +49,19 @@ def calcOutliers(data_input, maxoutliers, columns, recOred):
             y.index = range(len(y.index))
 
 
-
-        # move this out of the loop later
-        #print(outliers)
-        #print("seperator")
-        #Reducing dimensions from 1 to the number of columns - 1
-        outliers2P = lof.LOF_algorithm(pd.DataFrame(y), p=int(maxoutliers), distance_metric='euclidean')
+        if (method == "Isolation Forest (IF)" or method == "Angle Based Outlier Detection (ABOD)"):
+            model.fit(pd.DataFrame(y))
+            outliers2P = getTopOutliers(int(maxoutliers), np.abs(model.decision_function(pd.DataFrame(y))))
+        else:
+            outliers2P = lof.LOF_algorithm(pd.DataFrame(y), p=int(maxoutliers), distance_metric='euclidean')
         for i in range(1, (int(maxoutliers) + 1)):
             outliers = outliersP[0:i]
             #Inverse transforms the dataset, calculates all the Euclidean distances, and then adds them as an extra dimension
 
-            # the call to LOF is executed #columns*#outliers times, when it really should only be execute #columns times
             if (j != columns):
                 outliers2 = outliers2P[0:i]
             else:
                 outliers2 = outliers
-            #print("reduction")
-            #print(outliers2)
             counter = 0
             for n in range(len(outliers2)):
                 if outliers2[n][0] in trueoutliers:
@@ -75,6 +89,9 @@ def calcOutliers(data_input, maxoutliers, columns, recOred):
             st.session_state["olDRN"].append(len(data_input.columns))
 
 data = st.file_uploader(".mat Dataset or .json data", type=['.mat', ".json"], accept_multiple_files=False, key=None, help="Input a .mat Dataset that you want to find outliers in or already computed results in the form of a json file", on_change=None, args=None, kwargs=None, disabled=False)
+method = st.radio(
+    "What Outlier Detection Method to use?",
+    ('Local Outlier Factor (LOF)', 'Isolation Forest (IF)', 'Angle Based Outlier Detection (ABOD)'))
 #This executes if the received file is a mat file
 if data is not None and (data.name).split(".")[-1] == "mat":
     datainput = sio.loadmat(data)
@@ -117,8 +134,8 @@ if data is not None and (data.name).split(".")[-1] == "mat":
     st.write("loading")
     if ("data" not in st.session_state or data.name is not st.session_state["data"]):
         loading = st.progress(0)
-        calcOutliers(data_input, maxoutliers[0], len(data_input.columns), False)
-        calcOutliers(data_input, maxoutliers[0], len(data_input.columns), True)
+        calcOutliers(data_input, maxoutliers[0], len(data_input.columns), False, method)
+        calcOutliers(data_input, maxoutliers[0], len(data_input.columns), True, method)
         st.session_state["data"] = data.name
         loading.progress(100)
     numofoutliers = st.slider("Number of outliers", min_value=1, max_value=int(maxoutliers[0]), value=None, step=None, format=None, key=None, help=None, on_change=None, args=None, kwargs=None, disabled=False)
@@ -132,7 +149,8 @@ if data is not None and (data.name).split(".")[-1] == "mat":
     ax.plot(st.session_state["olDRN"], st.session_state["RSN"][numofoutliers - 1], '-yo', label='Outliers retained with Dim reduction (Reconstructed)')
     ax.plot(st.session_state["olDRN"], st.session_state["RTSN"][numofoutliers - 1], '-rX', label='True Outliers retained (Reconstructed)')
     combined = json.dumps([st.session_state["olDRN"], st.session_state["olSN"], st.session_state["TSN"], st.session_state["RSN"], st.session_state["RTSN"], maxoutliers[0]])
-    st.download_button("Download Results", combined, file_name=(f"{data.name[0:-4]}_V{version}.json"), mime='application/json', key=None, help=None, on_click=None, args=None, kwargs=None, disabled=False)
+    methodstring = method[(method.find("(") + 1):method.find("(", (method.find("(") + 1))]
+    st.download_button("Download Results", combined, file_name=(f"{data.name[0:-4]}_V{version}_{methodstring}.json"), mime='application/json', key=None, help=None, on_click=None, args=None, kwargs=None, disabled=False)
     num = max(st.session_state["olDRN"]) / 20
     newlist = [1]
     for i in range (2, 20):
