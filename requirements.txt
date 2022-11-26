@@ -1,0 +1,7 @@
+# This is a comment, to show how #-prefixed lines are ignored.
+# It is possible to specify requirements as plain names.
+numpy
+pandas
+sklearn.decomposition
+matplotlib.pyplot
+scipy.spatial
