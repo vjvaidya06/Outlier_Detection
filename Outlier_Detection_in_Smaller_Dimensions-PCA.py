@@ -11,7 +11,7 @@ from scipy.spatial import distance
 import json
 from pyod.models.abod import ABOD
 from sklearn.ensemble import IsolationForest
-version = 4.0
+version = "PCA"
 #recOred determines whether it's calculating for the reduced datasets with the Euclidean distance dimension (True), or just the reduced datasets (False)
 def getTopOutliers(numOutliers, scores):
     scores1 = scores.tolist()
