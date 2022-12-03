@@ -6,3 +6,4 @@ scipy
 seaborn
 mat4py
 pyod
+umap-learn
