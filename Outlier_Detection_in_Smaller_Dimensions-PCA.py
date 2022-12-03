@@ -150,7 +150,7 @@ if data is not None and (data.name).split(".")[-1] == "mat":
     ax.plot(st.session_state["olDRN"], st.session_state["RTSN"][numofoutliers - 1], '-rX', label='True Outliers retained (Reconstructed)')
     combined = json.dumps([st.session_state["olDRN"], st.session_state["olSN"], st.session_state["TSN"], st.session_state["RSN"], st.session_state["RTSN"], maxoutliers[0]])
     methodstring = method[(method.find("(") + 1):method.find("(", (method.find("(") + 1))]
-    st.download_button("Download Results", combined, file_name=(f"{data.name[0:-4]}_V{version}_{methodstring}.json"), mime='application/json', key=None, help=None, on_click=None, args=None, kwargs=None, disabled=False)
+    st.download_button("Download Results", combined, file_name=(f"{data.name[0:-4]}_{version}_{methodstring}.json"), mime='application/json', key=None, help=None, on_click=None, args=None, kwargs=None, disabled=False)
     num = max(st.session_state["olDRN"]) / 20
     newlist = [1]
     for i in range (2, 20):
