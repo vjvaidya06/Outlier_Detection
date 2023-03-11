@@ -1,4 +1,4 @@
-numpy
+numpy<1.24
 pandas
 scikit-learn
 matplotlib
@@ -7,4 +7,3 @@ seaborn
 mat4py
 pyod
 umap-learn
-numba
