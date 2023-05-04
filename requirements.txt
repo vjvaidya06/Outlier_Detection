@@ -7,4 +7,4 @@ seaborn
 mat4py
 pyod
 umap-learn
-numba<0.56.4
+numba
