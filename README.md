@@ -7,7 +7,7 @@ Random Projection:  https://outlierdetectioninsmallerdimensions-randomprojection
 
 UMAP: https://outlierdetectioninsmallerdimensions-umap.streamlit.app
 
-This is a link to a video presentation of the paper, with a demonstration of the websites below: https://ieeecps.org/files/28VK1c2bFDq8efZDdLHCtW
+This is a link to a video presentation of the paper, with a demonstration of the websites at the end: https://ieeecps.org/files/28VK1c2bFDq8efZDdLHCtW
 
 All of the datasets tested in the paper are from the ODDS (Outlier Detection Datasets) repository provided by Stonybrook University, which can be found at: http://odds.cs.stonybrook.edu
 
