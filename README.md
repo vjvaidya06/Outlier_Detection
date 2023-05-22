@@ -2,8 +2,10 @@ These are three websites made with the Streamlit Library that are meant to be a 
 Each uses a different method of dimensional reduction, links to access them are below.
 
 PCA: https://outlierdetectioninsmallerdimensions-pca.streamlit.app
-/Random Projection:  https://outlierdetectioninsmallerdimensions-randomprojection.streamlit.app
-/UMAP: https://outlierdetectioninsmallerdimensions-umap.streamlit.app
+
+Random Projection:  https://outlierdetectioninsmallerdimensions-randomprojection.streamlit.app
+
+UMAP: https://outlierdetectioninsmallerdimensions-umap.streamlit.app
 
 This is a link to a video presentation of the paper, with a demonstration of the websites below: https://ieeecps.org/files/28VK1c2bFDq8efZDdLHCtW
 
