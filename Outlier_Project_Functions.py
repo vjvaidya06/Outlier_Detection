@@ -14,26 +14,3 @@ def compare(A, B, Origlen):
     listnums[1] = len(B) - listnums[2]
     listnums[3] = Origlen - (len(A) + len(B) - listnums[2])
     return listnums
-
-def simpleplot(listx, listy, labelx, labely, wholenumsx, wholenumsy, type, **minmax):
-    if type != NULL:
-        plt.plot(listy, listx, type)
-    else:
-        plt.plot(listy, listx, type)
-    plt.ylabel(labely)
-    plt.xlabel(labelx)
-    if wholenumsx == True:
-        new_list = range(math.floor(min(listy)), math.ceil(max(listy))+1)
-        plt.xticks(new_list)
-    if wholenumsy == True:
-        new_list = range(math.floor(min(listx)), math.ceil(max(listx))+1)
-        plt.yticks(new_list)
-    try:
-        plt.xlim(minmax["xmin"], minmax["xmax"])
-    except KeyError:
-        NULL
-    try:
-        plt.ylim(minmax["ymin"], minmax["ymax"])
-    except KeyError:
-        NULL
-    plt.show()
